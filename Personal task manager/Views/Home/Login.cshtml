@@ -1,0 +1,64 @@
+﻿
+@{
+    ViewBag.Title = "Login";
+}
+<div class="parent">
+    <div class="block">
+        <div class="content">
+            <div>
+                <h4>Personal task manager</h4>
+            </div>
+            <div class="form-group">
+                <label for="inputEmail">Login:</label>
+                <input type="text" class="form-control" id="inputLogin" placeholder="Input login">
+            </div>
+            <div class="form-group">
+                <label for="inputPassword">Password:</label>
+                <input type="password" class="form-control" id="inputPassword" placeholder="Input password">
+            </div>
+            <p id="success" class="btn btn-success">Success</p>
+            <p id="registration" class="btn btn-primary" style="float: right">Registration</p>
+            <div id="errorMessage" class="text-danger"></div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts{
+    <script type="text/javascript">
+
+        $('#success').click(function () {
+            LoginInp = $('#inputLogin').val();
+            PasswordInp = $('#inputPassword').val();
+            $.post(location.origin + "/api/user/login", {Login: LoginInp, Password: PasswordInp}, function (data) {
+                if (data === true)
+                {
+                    $(location).attr('href', location.origin);
+                }
+                else
+                {
+                    $("#errorMessage").html("Incorrect data");
+                }
+            })
+        })
+
+        $('#registration').click(function () {
+            $(location).attr('href', location.origin + "/home/registration");
+        })
+            //user = {
+            //    Login: LoginInp,
+            //    Password: PasswordInp
+            //};
+
+            //$.ajax({
+            //    url: location.origin + "/api/user/login",
+            //    type: 'POST',
+            //    data: JSON.stringify(user),
+            //    contentType: "application/json;charset=utf-8",
+            //    success: function (data) {
+            //        alert('Данные отправлены');
+            //    }
+            //});
+        
+    </script>
+}

@@ -1,0 +1,217 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+
+<div id="AddModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">Create Task</h4>
+            </div>
+            <div class="modal-body">
+                <input id="AddTitle" class="title" type="text" />
+                <textarea id="AddContent" class="text" resize="none"></textarea> 
+            </div>
+            <div class="modal-footer">
+                <button id="AddSubmit" type="button" class="btn btn-success">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="EditModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">Edit Task</h4>
+            </div>
+            <div class="modal-body">
+                <input id="EditId" type="hidden" />
+                <input id="EditTitle" class="title" type="text" />
+                <textarea id="EditContent" class="text" resize="none"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button id="EditSubmit" type="button" class="btn btn-success">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="ReadMoreModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">Task</h4>
+            </div>
+            <div class="modal-body">
+                <h3 id ="ReadTitle" class="title"></h3>
+                <p id ="ReadContent" class="text"></p>
+                <p id="ReadData" class="date"></p>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="basis">
+    <h4 class="head">All Task</h4>
+    <button id="logoff" class="add btn btn-danger" style="float: right">Logout</button>
+    <button id="add" class="add btn btn-success">Add new task</button>
+    <div class="tasks">
+        Stand by
+    </div>
+
+</div>
+
+@section scripts{
+    <script type="text/javascript">
+        var Page = 1;
+
+        $(document).ready(reloadList(1))
+
+        $('#logoff').click(function () {
+            $.post(location.origin + "/api/user/Logoff", function () {
+                location.reload();
+            })
+        })
+
+        $('#add').click(function () {
+            $('#AddTitle').val("");
+            $('#AddContent').val("");
+            $('#AddModal').modal('show');
+        });
+
+        $('#AddSubmit').click(function () {
+            $.post(location.origin + "/api/task/create", { Title: $('#AddTitle').val(), Content: $('#AddContent').val() }, function () {
+                reloadList(Page);
+                $('#AddModal').modal('hide');
+            })
+        })
+
+        $('body').delegate('#edit', 'click', function () {
+            var id = $(this).parent()[0].id;
+            $.post(location.origin + "/api/task/find/" + id, function (data) {
+                var task = $.parseJSON(data);
+                $("#EditId").val(task.Id);
+                $("#EditTitle").val(task.Title);
+                $("#EditContent").val(task.Content);
+                $('#EditModal').modal('show');
+            })
+        });
+
+        $('#EditSubmit').click(function () {
+            $.post(location.origin + "/api/task/update", { Id: $('#EditId').val(), Title: $('#EditTitle').val(), Content: $("#EditContent").val() }, function () {
+                reloadList(Page);
+                $('#EditModal').modal('hide');
+            })
+        });
+
+        $('body').delegate('#readMore', 'click', function () {
+            var id = $(this).parent()[0].id;
+            $.post(location.origin + "/api/task/find/" + id, function (data) {
+                var task = $.parseJSON(data);
+                $("#ReadTitle").html(task.Title);
+                $("#ReadContent").html(task.Content);
+                $("#ReadData").html(task.DateCreate);
+                $('#ReadMoreModal').modal('show');
+            })
+        });
+
+        $('#readMore').click(function () {
+            $('#ReadMoreModal').modal('show');
+        });
+
+        $('body').delegate('#delete', 'click', function () {
+            var id = $(this).parent()[0].id;
+            $.post(location.origin + "/api/task/delete/" + id, function (data) {
+                reloadList(Page);
+            })
+        });
+
+        $('body').delegate('#Page', 'click', function () {
+            Page = $(this).html();
+            reloadList(Page);
+        });
+
+        function reloadList(Page) {
+            $.post(location.origin + "/api/task/findpage/" + Page , function (data) {
+                var Json = $.parseJSON(data);
+                $('.tasks').empty();
+                result = '';
+                $.each(Json.Items, function (i, obj) { result += displayTask(obj) });
+
+                result += '<ul class="pagination">';
+                for (i = 1; i <= Json.TotalPages; i++) {
+                    var classs = i == Json.PageNumber ? ' class = "active"' : "";
+                    result += '<li' + classs + '><a id="Page">' + i + '</a></li>';
+                }
+                result += '</ul>';
+
+                $(result).appendTo('.tasks');
+            })
+        }
+
+        function displayTask(Task) {
+            result = '<div id="' + Task.Id + '"class="task">';
+            result += '<h3 class="title">' + Task.Title + '</h3>';
+            var cont = Task.Content != null ? Task.Content.substring(0, 300) + "..." : "";
+            result += '<p class="text">' + cont + '</p>';
+            result += '<button id="readMore" class="btn btn-primary">ReadMore</button>';
+            result += '<button id="edit" class="btn btn-success angle">Edit</button>';
+            result += '<button id="delete" class="btn btn-danger angle">Delete</button>';
+            result += '<p class="date">' + Task.DateCreate + '</p>';
+            result += '</div>';
+            return result;
+        }
+
+
+
+    
+
+
+
+    //$('body').delegate('#delete', 'click', function () {
+    //    $.post(location.origin + "/company/Delete", { 'id': $(this).closest('div.company')[0].id }, function () {reloadList()});
+    //})
+
+    //$('body').delegate('#update', 'click', function () {
+
+    //    $.post(location.origin + "/company/Find", { 'id': $(this).closest('div.company')[0].id }, function (data) {
+    //        var company = $.parseJSON(data);
+    //        $("#uId").val(company.Id);
+    //        $('#uName').val(company.Name);
+    //        $('#uEstimatedEarnings').val(company.EstimatedEarnings);
+    //        $("#updateModal").modal('show');
+    //    });
+    //})
+
+    //$('#okUpdate').click(function () {
+    //    $.post(location.origin + "/company/Update", { 'id': $('#uId').val(), 'name': $('#uName').val(), 'estimatedEarnings': $('#uEstimatedEarnings').val() },
+    //        function (data) {
+    //            $("#updateModal").modal('hide');
+    //            reloadList();
+    //        })
+    //})
+
+    //$('#okCreate').click(function () {
+    //    console.log($('#cName').val());
+    //    console.log($('#cEstimatedEarnings').val());
+    //    console.log($('#cIdFather').val());
+    //    $.post(location.origin + "/company/Create", { 'name': $('#cName').val(), 'EstimatedEarnings': $('#cEstimatedEarnings').val(), 'fatherCompanyId': $('#cIdFather').val()},
+    //        function (data) {
+    //            $("#createModal").modal('hide')
+    //            reloadList();
+    //        })
+    //})
+
+
+
+
+    </script>
+}

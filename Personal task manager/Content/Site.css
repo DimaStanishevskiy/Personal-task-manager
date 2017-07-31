@@ -1,0 +1,103 @@
+﻿body {
+    padding-top: 50px;
+    padding-bottom: 20px;
+}
+
+/* Set padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Set width on the form input elements since they're 100% wide by default */
+
+.parent {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    overflow: auto;
+}
+
+.block {
+    width: 250px;
+    height: 250px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: -125px 0 0 -125px;
+}
+
+.content {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    padding: 20px;
+    border: solid 1px;
+    border-radius: 20px 20px;
+
+}
+
+.basis {
+    margin-top: 15px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 800px;
+    border: solid 1px;
+}
+
+.head {
+    text-align: center;
+    display: block;
+    border: solid 1px;
+    margin: -1px;
+    padding: 5px;
+}
+.tasks {
+    margin-left: auto;
+    margin-right:auto;
+    margin-top: 15px;
+    margin-bottom: 10px;
+    width: 750px;
+}
+
+.title {
+    font-weight:bold;
+    display:block;
+    text-align:center;
+    margin-top: 0px;
+}
+
+.task {
+    border: solid 1px;
+    margin: 15px;
+    padding: 15px;
+}
+.date {
+    display: inline-block;
+    float: right;
+    color: darkgrey;
+}
+textarea.text {
+    display: block;
+    resize: none;
+    width: 500px;
+    height: 150px;
+    margin: 15px auto;
+    padding: 5px;
+    border: solid 1px;
+    border-radius: 5px 5px;
+}
+input.title {
+    width: 500px;
+    margin: 15px auto;
+    padding: 5px;
+    border: solid 1px;
+    border-radius: 5px 5px;
+}
+
+.add {
+    margin: 10px 35px;
+}

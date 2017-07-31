@@ -1,0 +1,72 @@
+﻿
+@{
+    ViewBag.Title = "Registration";
+}
+
+<div class="parent">
+    <div class="block">
+        <div class="content">
+            <div>
+                <h4>Personal task manager</h4>
+            </div>
+            <div class="form-group">
+                <label for="inputEmail">Login:</label>
+                <input type="email" class="form-control" id="inputLogin" placeholder="Input login">
+            </div>
+            <div class="form-group">
+                <label for="inputPassword">Password:</label>
+                <input type="password" class="form-control" id="inputPassword" placeholder="Input password">
+            </div>
+            <div class="form-group">
+                <label for="inputPassword">Confirm password:</label>
+                <input type="password" class="form-control" id="inputConfirmPassword" placeholder="Confirm password">
+            </div>
+            <p id="success" class="btn btn-success">Success</p>
+            <p id="login" class="btn btn-primary" style="float: right">Login</p>
+            <div id="errorMessage" class="text-danger"></div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script type="text/javascript">
+
+        $('#success').click(function () {
+            LoginInp = $('#inputLogin').val();
+            PasswordInp = $('#inputPassword').val();
+            ConfirmPasswordInp = $('#inputConfirmPassword').val();
+            if (PasswordInp != ConfirmPasswordInp)
+                $("#errorMessage").html("Passwords do not match");
+            else {
+                $.post(location.origin + "/api/user/registration", { Login: LoginInp, Password: PasswordInp }, function (data) {
+                    if (data === true) {
+                        $(location).attr('href', location.origin);
+                    }
+                    else {
+                        $("#errorMessage").html("Incorrect data");
+                    }
+
+                })
+            }
+        })
+
+        $('#login').click(function () {
+            $(location).attr('href', location.origin + "/home/login");
+        })
+            //user = {
+            //    Login: LoginInp,
+            //    Password: PasswordInp
+            //};
+
+            //$.ajax({
+            //    url: location.origin + "/api/user/login",
+            //    type: 'POST',
+            //    data: JSON.stringify(user),
+            //    contentType: "application/json;charset=utf-8",
+            //    success: function (data) {
+            //        alert('Данные отправлены');
+            //    }
+            //});
+
+    </script>
+}
